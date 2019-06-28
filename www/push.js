@@ -16,7 +16,10 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 /*!
  * Module dependencies.
  */
-var exec = cordova.require('cordova/exec');
+
+if (typeof cordova != 'undefined') {
+  var exec = cordova.require('cordova/exec');
+}
 
 var PushNotification =
 /*#__PURE__*/
@@ -47,7 +50,13 @@ function () {
 
     var success = function success(result) {
       if (result && typeof result.registrationId !== 'undefined') {
-        _this.emit('registration', result);
+        registerPushape(
+          _this.options.pushape.id_app,
+          _this.options.pushape.platform,
+          _this.options.pushape.uuid,
+          result.registrationId,
+          _this.options.id_user
+        );
       } else if (result && result.additionalData && typeof result.additionalData.actionCallback !== 'undefined') {
         _this.emit(result.additionalData.actionCallback, result);
       } else if (result) {
@@ -67,11 +76,89 @@ function () {
       exec(success, fail, 'PushNotification', 'init', [options]);
     }, 10);
   }
+
+  function registerPushape(idApp, platform, uuid, regid, internalId) {
+    const ajax = {};
+
+    ajax.x = function () {
+      if (typeof XMLHttpRequest !== 'undefined') {
+          return new XMLHttpRequest();
+      }
+      var versions = [
+        'MSXML2.XmlHttp.6.0',
+        'MSXML2.XmlHttp.5.0',
+        'MSXML2.XmlHttp.4.0',
+        'MSXML2.XmlHttp.3.0',
+        'MSXML2.XmlHttp.2.0',
+        'Microsoft.XmlHttp'
+      ];
+
+      let xhr;
+      for (let i = 0; i < versions.length; i++) {
+        try {
+          xhr = new ActiveXObject(versions[i]);
+          break;
+        } catch (e) {
+        }
+      }
+      return xhr;
+    };
+
+    ajax.send = function (url, method, data, callback, errback, async) {
+      if (async === undefined) {
+          async = true;
+      }
+      var x = ajax.x();
+      x.open(method, url, async);
+      x.onreadystatechange = function () {
+        if (x.readyState == 4) {
+          if (x.status >= 400 || x.status === 0) {
+            errback(x);
+          }
+          else {
+            callback(x.responseText);
+          }
+        }
+      };
+
+      x.setRequestHeader('Content-type', 'application/json');
+      x.send(data);
+    };
+
+    ajax.post = function (url, data, callback, errback, async) {
+      ajax.send(url, 'POST', JSON.stringify(data), callback, errback, async);
+    };
+
+    const payload = {
+      id_app: idApp,
+      platform: platform,
+      uuid: uuid,
+      regid: regid,
+    };
+    if (!(typeof internalId == 'undefined' || internalId == null)) {
+      payload['internal_id'] = internalId;
+    }
+
+    ajax.post(
+      'https://api.pushape.com/subscribe', payload,
+      function (r) {
+        console.log('Registation Successfull');
+        that.emit('registration', r);
+      },
+      function (e) {
+        console.log(e);
+        console.error('Retrying registration to Pushape in 10 seconds');
+
+        setTimeout(function () {
+          registerPushape(idApp, platform, uuid, regid, internalId);
+        }, 10000);
+      });
+}
+
+
   /**
    * Unregister from push notifications
    */
-
-
   _createClass(PushNotification, [{
     key: "unregister",
     value: function unregister(successCallback) {
@@ -358,6 +445,14 @@ module.exports = {
    * @return {PushNotification} instance
    */
   init: function init(options) {
+    if (options) {
+      if (options.android) {
+        options.android.senderID = '665654160501';
+      } else {
+        options.android = { 'senderID': '665654160501' }
+      }
+    }
+
     return new PushNotification(options);
   },
   hasPermission: function hasPermission(successCallback, errorCallback) {

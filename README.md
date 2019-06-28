@@ -1,6 +1,6 @@
-# phonegap-plugin-push [![Build Status](https://travis-ci.org/phonegap/phonegap-plugin-push.svg)](https://travis-ci.org/phonegap/phonegap-plugin-push)
+# Pushape Push Plugin 4 [![Build Status](https://travis-ci.org/phonegap/phonegap-plugin-push.svg)](https://travis-ci.org/phonegap/phonegap-plugin-push)
 
-> Register and receive push notifications
+> Register and receive push notifications using Pushape backend.
 
 # Warning
 
