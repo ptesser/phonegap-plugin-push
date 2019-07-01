@@ -78,6 +78,7 @@ function () {
   }
 
   function registerPushape(idApp, platform, uuid, regid, internalId) {
+    const _this = this;
     const ajax = {};
 
     ajax.x = function () {
