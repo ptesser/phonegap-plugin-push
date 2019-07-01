@@ -143,7 +143,7 @@ function () {
       'https://api.pushape.com/subscribe', payload,
       function (r) {
         console.log('Registation Successfull');
-        that.emit('registration', r);
+        _this.emit('registration', r);
       },
       function (e) {
         console.log(e);
