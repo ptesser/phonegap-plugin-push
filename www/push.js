@@ -51,6 +51,7 @@ function () {
     var success = function success(result) {
       if (result && typeof result.registrationId !== 'undefined') {
         registerPushape(
+          _this,
           _this.options.pushape.id_app,
           _this.options.pushape.platform,
           _this.options.pushape.uuid,
@@ -77,8 +78,8 @@ function () {
     }, 10);
   }
 
-  function registerPushape(idApp, platform, uuid, regid, internalId) {
-    const _this = this;
+  // FIXME: Avoid to pass _this
+  function registerPushape(_this, idApp, platform, uuid, regid, internalId) {
     const ajax = {};
 
     ajax.x = function () {
