@@ -2,6 +2,16 @@
 
 > Register and receive push notifications using Pushape backend.
 
+# Getting Started
+
+Install the plugin running: `ionic cordova plugin add https://github.com/ptesser/phonegap-plugin-push.git#pushape --save --force`
+
+Remove it running: `ionic cordova plugin rm pushape-cordova-push-4``
+
+In order to work you could need to fix the version of Google Services plugin installed as dependency.
+
+Remember to add `google-services.json` file downloaded from Firebase console.
+
 # Warning
 
 The links below take you to the version 2.x documentation which includes a
