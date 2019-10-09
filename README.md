@@ -6,7 +6,7 @@
 
 Install the plugin running: `ionic cordova plugin add https://github.com/ptesser/phonegap-plugin-push.git#pushape --save --force`
 
-Remove it running: `ionic cordova plugin rm pushape-cordova-push-4``
+Remove it running: `ionic cordova plugin rm pushape-cordova-push-4`
 
 In order to work you could need to fix the version of Google Services plugin installed as dependency.
 
